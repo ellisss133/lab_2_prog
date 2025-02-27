@@ -88,3 +88,30 @@ class HtmlDocument : Document {
     Console.WriteLine($"Кодировка: {Encoding}");
   }
 }
+
+class DocumentManager {
+  private static DocumentManager s_instance;
+  private List<Document> _documents = new List<Document>();
+
+  private DocumentManager() { }
+
+  public static DocumentManager Instance {
+    get {
+      if (s_instance == null) {
+        s_instance = new DocumentManager();
+      }
+      return s_instance;
+    }
+  }
+
+  public void AddDocument(Document document) {
+    _documents.Add(document);
+  }
+
+  public void ShowDocuments() {
+    foreach (var document in _documents) {
+      document.GetInfo();
+      Console.WriteLine("----------------------");
+    }
+  }
+}
