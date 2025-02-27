@@ -115,3 +115,19 @@ class DocumentManager {
     }
   }
 }
+
+class Program {
+  static void Main() {
+    DocumentManager manager = DocumentManager.Instance;
+
+    manager.AddDocument(new WordDocument("Доклад", "Иванов", "наука, доклад", "Образование", "C:/docs/report.docx", 1200));
+    manager.AddDocument(new PdfDocument("Учебник", "Петров", "математика, учебник", "Образование", "C:/docs/math.pdf", true));
+    manager.AddDocument(new ExcelDocument("Таблица", "Сидоров", "финансы, таблица", "Бизнес", "C:/docs/finance.xlsx", 5));
+    manager.AddDocument(new TxtDocument("Заметки", "Смирнов", "личное, заметки", "Личное", "C:/docs/notes.txt", 200));
+    manager.AddDocument(new HtmlDocument("Сайт", "Козлов", "веб, сайт", "IT", "C:/docs/index.html", "UTF-8"));
+
+    manager.ShowDocuments();
+    Console.ReadLine();
+  }
+}
+
