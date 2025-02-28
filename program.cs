@@ -141,7 +141,7 @@ class Program {
         manager.ShowDocuments();
       }
       else if (choice == "2") {
-        // Простой пример добавления документа
+        
         Console.WriteLine("Добавить новый документ:");
 
         Console.Write("Название: ");
