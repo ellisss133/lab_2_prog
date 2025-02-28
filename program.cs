@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+
 class Document {
   public string Name { get; }
   public string Author { get; }
@@ -126,8 +128,48 @@ class Program {
     manager.AddDocument(new TxtDocument("Заметки", "Смирнов", "личное, заметки", "Личное", "C:/docs/notes.txt", 200));
     manager.AddDocument(new HtmlDocument("Сайт", "Козлов", "веб, сайт", "IT", "C:/docs/index.html", "UTF-8"));
 
-    manager.ShowDocuments();
-    Console.ReadLine();
+    while (true) {
+      Console.Clear();
+      Console.WriteLine("Меню:");
+      Console.WriteLine("1. Показать все документы");
+      Console.WriteLine("2. Добавить новый документ");
+      Console.WriteLine("3. Выйти");
+
+      var choice = Console.ReadLine();
+
+      if (choice == "1") {
+        manager.ShowDocuments();
+      }
+      else if (choice == "2") {
+        // Простой пример добавления документа
+        Console.WriteLine("Добавить новый документ:");
+
+        Console.Write("Название: ");
+        string name = Console.ReadLine();
+
+        Console.Write("Автор: ");
+        string author = Console.ReadLine();
+
+        Console.Write("Ключевые слова: ");
+        string keywords = Console.ReadLine();
+
+        Console.Write("Тематика: ");
+        string topic = Console.ReadLine();
+
+        Console.Write("Путь: ");
+        string path = Console.ReadLine();
+
+        manager.AddDocument(new Document(name, author, keywords, topic, path));
+      }
+      else if (choice == "3") {
+        break;
+      }
+      else {
+        Console.WriteLine("Неверный выбор. Попробуйте снова.");
+      }
+
+      Console.WriteLine("Нажмите любую клавишу для продолжения...");
+      Console.ReadKey();
+    }
   }
 }
-
