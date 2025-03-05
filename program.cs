@@ -4,11 +4,11 @@ using System.Collections.Generic;
 class Document {
   public string Name { get; }
   public string Author { get; }
-  public string Keywords { get; }
+  public List<string> Keywords { get; }
   public string Topic { get; }
   public string FilePath { get; }
 
-  public Document(string name, string author, string keywords, string topic, string filePath) {
+  public Document(string name, string author, List<string> keywords, string topic, string filePath) {
     Name = name;
     Author = author;
     Keywords = keywords;
@@ -17,14 +17,14 @@ class Document {
   }
 
   public virtual void GetInfo() {
-    Console.WriteLine($"Название: {Name}, Автор: {Author}, Ключевые слова: {Keywords}, Тематика: {Topic}, Путь: {FilePath}");
+    Console.WriteLine($"Название: {Name}, Автор: {Author}, Ключевые слова: {string.Join(", ", Keywords)}, Тематика: {Topic}, Путь: {FilePath}");
   }
 }
 
 class WordDocument : Document {
   public int WordCount { get; }
 
-  public WordDocument(string name, string author, string keywords, string topic, string filePath, int wordCount)
+  public WordDocument(string name, string author, List<string> keywords, string topic, string filePath, int wordCount)
     : base(name, author, keywords, topic, filePath) {
     WordCount = wordCount;
   }
@@ -38,7 +38,7 @@ class WordDocument : Document {
 class PdfDocument : Document {
   public bool IsEncrypted { get; }
 
-  public PdfDocument(string name, string author, string keywords, string topic, string filePath, bool isEncrypted)
+  public PdfDocument(string name, string author, List<string> keywords, string topic, string filePath, bool isEncrypted)
     : base(name, author, keywords, topic, filePath) {
     IsEncrypted = isEncrypted;
   }
@@ -52,7 +52,7 @@ class PdfDocument : Document {
 class ExcelDocument : Document {
   public int SheetCount { get; }
 
-  public ExcelDocument(string name, string author, string keywords, string topic, string filePath, int sheetCount)
+  public ExcelDocument(string name, string author, List<string> keywords, string topic, string filePath, int sheetCount)
     : base(name, author, keywords, topic, filePath) {
     SheetCount = sheetCount;
   }
@@ -66,7 +66,7 @@ class ExcelDocument : Document {
 class TxtDocument : Document {
   public int LineCount { get; }
 
-  public TxtDocument(string name, string author, string keywords, string topic, string filePath, int lineCount)
+  public TxtDocument(string name, string author, List<string> keywords, string topic, string filePath, int lineCount)
     : base(name, author, keywords, topic, filePath) {
     LineCount = lineCount;
   }
@@ -80,7 +80,7 @@ class TxtDocument : Document {
 class HtmlDocument : Document {
   public string Encoding { get; }
 
-  public HtmlDocument(string name, string author, string keywords, string topic, string filePath, string encoding)
+  public HtmlDocument(string name, string author, List<string> keywords, string topic, string filePath, string encoding)
     : base(name, author, keywords, topic, filePath) {
     Encoding = encoding;
   }
@@ -106,14 +106,96 @@ class DocumentManager {
     }
   }
 
-  public void AddDocument(Document document) {
+public void AddDocument(Document document) {
     _documents.Add(document);
   }
 
   public void ShowDocuments() {
+    if (_documents.Count == 0) {
+      Console.WriteLine("Документов нет.");
+      return;
+    }
+
     foreach (var document in _documents) {
       document.GetInfo();
       Console.WriteLine("----------------------");
+    }
+  }
+  
+  public void ShowMenu() {
+    while (true) {
+      Console.WriteLine("\nМеню:");
+      Console.WriteLine("1. Добавить документ");
+      Console.WriteLine("2. Показать все документы");
+      Console.WriteLine("3. Выйти");
+      Console.Write("Выберите действие: ");
+
+      string choice = Console.ReadLine();
+      switch (choice) {
+        case "1":
+          AddDocumentFromInput();
+          break;
+        case "2":
+          ShowDocuments();
+          break;
+        case "3":
+          return;
+        default:
+          Console.WriteLine("Неверный ввод. Попробуйте снова.");
+          break;
+      }
+    }
+  }
+
+  private void AddDocumentFromInput() {
+    Console.Write("Введите название: ");
+    string name = Console.ReadLine();
+    
+    Console.Write("Введите автора: ");
+    string author = Console.ReadLine();
+    
+    Console.Write("Введите ключевые слова через запятую: ");
+    List<string> keywords = new List<string>(Console.ReadLine().Split(','));
+
+    Console.Write("Введите тематику: ");
+    string topic = Console.ReadLine();
+    
+    Console.Write("Введите путь к файлу: ");
+    string filePath = Console.ReadLine();
+    
+    Console.WriteLine("Выберите тип документа:");
+    Console.WriteLine("1. Word\n2. PDF\n3. Excel\n4. TXT\n5. HTML");
+    string docType = Console.ReadLine();
+
+    switch (docType) {
+      case "1":
+        Console.Write("Введите количество слов: ");
+        int wordCount = int.Parse(Console.ReadLine());
+        AddDocument(new WordDocument(name, author, keywords, topic, filePath, wordCount));
+        break;
+      case "2":
+        Console.Write("Документ зашифрован? (true/false): ");
+        bool isEncrypted = bool.Parse(Console.ReadLine());
+        AddDocument(new PdfDocument(name, author, keywords, topic, filePath, isEncrypted));
+        break;
+      case "3":
+        Console.Write("Введите количество листов: ");
+        int sheetCount = int.Parse(Console.ReadLine());
+        AddDocument(new ExcelDocument(name, author, keywords, topic, filePath, sheetCount));
+        break;
+      case "4":
+        Console.Write("Введите количество строк: ");
+        int lineCount = int.Parse(Console.ReadLine());
+        AddDocument(new TxtDocument(name, author, keywords, topic, filePath, lineCount));
+        break;
+      case "5":
+        Console.Write("Введите кодировку: ");
+        string encoding = Console.ReadLine();
+        AddDocument(new HtmlDocument(name, author, keywords, topic, filePath, encoding));
+        break;
+      default:
+        Console.WriteLine("Неверный ввод.");
+        break;
     }
   }
 }
@@ -121,55 +203,6 @@ class DocumentManager {
 class Program {
   static void Main() {
     DocumentManager manager = DocumentManager.Instance;
-
-    manager.AddDocument(new WordDocument("Доклад", "Иванов", "наука, доклад", "Образование", "C:/docs/report.docx", 1200));
-    manager.AddDocument(new PdfDocument("Учебник", "Петров", "математика, учебник", "Образование", "C:/docs/math.pdf", true));
-    manager.AddDocument(new ExcelDocument("Таблица", "Сидоров", "финансы, таблица", "Бизнес", "C:/docs/finance.xlsx", 5));
-    manager.AddDocument(new TxtDocument("Заметки", "Смирнов", "личное, заметки", "Личное", "C:/docs/notes.txt", 200));
-    manager.AddDocument(new HtmlDocument("Сайт", "Козлов", "веб, сайт", "IT", "C:/docs/index.html", "UTF-8"));
-
-    while (true) {
-      Console.Clear();
-      Console.WriteLine("Меню:");
-      Console.WriteLine("1. Показать все документы");
-      Console.WriteLine("2. Добавить новый документ");
-      Console.WriteLine("3. Выйти");
-
-      var choice = Console.ReadLine();
-
-      if (choice == "1") {
-        manager.ShowDocuments();
-      }
-      else if (choice == "2") {
-        
-        Console.WriteLine("Добавить новый документ:");
-
-        Console.Write("Название: ");
-        string name = Console.ReadLine();
-
-        Console.Write("Автор: ");
-        string author = Console.ReadLine();
-
-        Console.Write("Ключевые слова: ");
-        string keywords = Console.ReadLine();
-
-        Console.Write("Тематика: ");
-        string topic = Console.ReadLine();
-
-        Console.Write("Путь: ");
-        string path = Console.ReadLine();
-
-        manager.AddDocument(new Document(name, author, keywords, topic, path));
-      }
-      else if (choice == "3") {
-        break;
-      }
-      else {
-        Console.WriteLine("Неверный выбор. Попробуйте снова.");
-      }
-
-      Console.WriteLine("Нажмите любую клавишу для продолжения...");
-      Console.ReadKey();
-    }
+    manager.ShowMenu();
   }
 }
